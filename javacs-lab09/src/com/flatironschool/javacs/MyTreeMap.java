@@ -72,7 +72,15 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 		Comparable<? super K> k = (Comparable<? super K>) target;
 		
 		// the actual search
-        // TODO: Fill this in.
+		Node current = root;
+        while(current!=null){
+        	if(k.compareTo(current.key) < 0)
+        		current = current.left;
+        	else if(k.compareTo(current.key) > 0)
+        		current = current.right;
+        	else if(k.equals(current.key))
+        		return current;
+        }
         return null;
 	}
 
@@ -92,6 +100,11 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 
 	@Override
 	public boolean containsValue(Object target) {
+		Collection<V> vals = values();
+		for(V v: vals){
+			if(equals(v, target))
+				return true;
+		}
 		return false;
 	}
 
@@ -117,12 +130,27 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 	@Override
 	public Set<K> keySet() {
 		Set<K> set = new LinkedHashSet<K>();
-        // TODO: Fill this in.
+		keysInOrder(root, set);
 		return set;
 	}
+	
+	void keysInOrder(Node n, Set<K> set) /*see declaration of TNode below*/
+
+	{
+
+	     if(n == null)
+
+	           return;
+
+	     keysInOrder(n.left, set);
+	     set.add(n.key);
+	     keysInOrder(n.right, set);
+
+	}  
 
 	@Override
 	public V put(K key, V value) {
+		System.out.println("value:" + value);
 		if (key == null) {
 			throw new NullPointerException();
 		}
@@ -135,8 +163,43 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 	}
 
 	private V putHelper(Node node, K key, V value) {
-        // TODO: Fill this in.
-        return null;
+        
+		Node current = node;
+		System.out.println("Insert: " + key);
+		@SuppressWarnings("unchecked")
+		Comparable<? super K> k = (Comparable<? super K>) key;
+        while(true){
+        	System.out.println("current: " + current.key);
+        	if(k.equals(current.key)){
+        		current.value = value;
+        		break;
+        	}else if(k.compareTo(current.key) < 0){
+        		if(current.left != null){
+        			System.out.println("left");
+        			current = current.left;
+        		}else{
+        			current.left = new Node(key, value);
+        			size++;
+        			break;
+        		}
+        	}else if(k.compareTo(current.key) > 0){
+        		if(current.right != null){
+        			System.out.println("Right");
+        			current = current.right;
+        		}else{
+        			current.right = new Node(key, value);
+        			size++;
+        			break;
+        		}
+        	}else{
+        		System.out.println("WHAT");
+        	}
+        }
+        System.out.println("jjjjj");
+        for (K i: keySet()) {
+			System.out.println(i + ", " + get(i));
+		}
+        return value;
 	}
 
 	@Override
